@@ -4,53 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GridTejamkor AI</title>
-
+    
     <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#16a34a">
     
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-green-50 p-4">
+<body class="bg-green-50 p-4 font-sans">
     <div class="max-w-md mx-auto bg-white rounded-2xl shadow-lg p-6">
         <h1 class="text-2xl font-bold text-green-600 text-center mb-6">GridTejamkor AI</h1>
         
         <div class="space-y-4">
-            <input type="number" id="solar" placeholder="Quyosh (kVt)" class="w-full border p-3 rounded-lg">
-            <input type="number" id="battery" placeholder="Batareya (kVt)" class="w-full border p-3 rounded-lg">
-            <input type="number" id="usage" placeholder="Iste'mol (kVt)" class="w-full border p-3 rounded-lg">
+            <label class="block text-sm font-medium text-gray-700">Quyosh paneli (kVt)</label>
+            <input type="number" id="solar" placeholder="Masalan: 20" class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none">
             
-            <button onclick="hisobla()" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold">
+            <label class="block text-sm font-medium text-gray-700">Batareya sig'imi (kVt)</label>
+            <input type="number" id="battery" placeholder="Masalan: 10" class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none">
+            
+            <label class="block text-sm font-medium text-gray-700">Kunduzgi iste'mol (kVt)</label>
+            <input type="number" id="usage" placeholder="Masalan: 5" class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none">
+            
+            <button onclick="hisobla()" class="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-bold shadow-lg transition-all active:scale-95">
                 Hisoblash va Botga yuborish
             </button>
         </div>
 
-        <div id="result" class="mt-6 hidden p-4 bg-green-100 rounded-lg text-center font-bold">
-            Natija: <span id="summa">0</span> so'm tejash!
+        <div id="result" class="mt-6 hidden p-4 bg-green-100 rounded-xl text-center border border-green-200">
+            <p class="text-green-800">Sizning bugungi foydangiz:</p>
+            <div class="text-2xl font-black text-green-700"><span id="summa">0</span> so'm</div>
         </div>
     </div>
 
     <script>
         function hisobla() {
-            const solar = document.getElementById('solar').value;
-            const battery = document.getElementById('battery').value;
-            const usage = document.getElementById('usage').value;
+            const solar = document.getElementById('solar').value || 0;
+            const battery = document.getElementById('battery').value || 0;
+            const usage = document.getElementById('usage').value || 0;
             
-            // HISOB-KITOB
             let foyda = Math.min(Math.max(solar - usage, 0), battery) * 600;
+            
             document.getElementById('result').classList.remove('hidden');
             document.getElementById('summa').innerText = foyda.toLocaleString();
 
-            // --- TELEGRAM SOZLAMALARI (SHU YERNI O'ZGARTIRING) ---
+            // DIQQAT: SHU YERGA O'ZINGIZNI MA'LUMOTLARINGIZNI QAYTADAN QO'YING
             const token = "8709283761:AAF0YQVWR6uJa4aQnrYcA5euvBoD4kcUf2w"; 
             const chat_id = "8408192670";
-            // ---------------------------------------------------
 
-            const text = `🚀 Yangi hisob!%0A☀️ Quyosh: ${solar}%0A🔋 Batareya: ${battery}%0A💰 Foyda: ${foyda} so'm`;
-            const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chat_id}&text=${text}`;
+            const text = `🚀 *Yangi Hisob!*%0A☀️ Quyosh: ${solar} kVt%0A🔋 Batareya: ${battery} kVt%0A💰 *Foyda: ${foyda.toLocaleString()} so'm*`;
+            const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chat_id}&text=${text}&parse_mode=Markdown`;
 
             fetch(url).then(() => {
-                alert("Xabar botga yuborildi!");
-            }).catch(err => {
-                alert("Xato: " + err);
+                alert("Muvaffaqiyatli! Ilova ma'lumotni botga yubordi.");
             });
         }
     </script>
