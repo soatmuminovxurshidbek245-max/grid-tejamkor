@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GridTejamkor AI — Tejamkorlik Kalkulyatori</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #f0fdf4; }
+        .card { border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body class="font-sans antialiased text-gray-900">
+
+    <div class="max-w-md mx-auto min-h-screen flex flex-col p-4">
+        <header class="py-6 text-center">
+            <h1 class="text-3xl font-extrabold text-green-700 tracking-tight">GridTejamkor <span class="text-green-500">AI</span></h1>
+            <p class="text-gray-500 text-sm mt-1">O‘zbekiston uchun aqlli energiya yechimi</p>
+        </header>
+
+        <main class="bg-white card p-6 space-y-6">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700">Quyosh paneli ishlab chiqarishi (kVt/soat)</label>
+                    <input type="number" id="solar" class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition" placeholder="Masalan: 25">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700">Batareya sig‘imi (kVt/soat)</label>
+                    <input type="number" id="battery" class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition" placeholder="Masalan: 10">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700">Kunduzgi iste’mol (kVt/soat)</label>
+                    <input type="number" id="usage" class="w-full mt-1 p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition" placeholder="Masalan: 12">
+                </div>
+            </div>
+
+            <button onclick="calculate()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-green-200 transition-all active:scale-95">
+                Tejamkorlikni hisoblash
+            </button>
+
+            <div id="result" class="hidden animate-fade-in">
+                <hr class="my-4 border-gray-100">
+                <div class="bg-green-50 p-4 rounded-2xl border border-green-100">
+                    <p class="text-sm text-green-800 font-medium">Bugungi xulosa:</p>
+                    <h2 id="savingMoney" class="text-2xl font-bold text-green-700 mt-1">0 so‘m</h2>
+                    <p id="advice" class="text-xs text-green-600 mt-2 leading-relaxed"></p>
+                    
+                    <div class="mt-4">
+                        <div class="flex justify-between text-[10px] font-bold text-gray-400 mb-1 uppercase">
+                            <span>Batareya samaradorligi</span>
+                            <span id="percentText">0%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                            <div id="progressBar" class="bg-green-500 h-full transition-all duration-1000" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="mt-auto py-6 text-center">
+            <p class="text-gray-400 text-xs">© 2026 GridTejamkor AI. Ma'lumotlar 2026-yilgi tabaqalashtirilgan tariflar asosida hisoblanadi.</p>
+        </footer>
+    </div>
+
+    <script>
+        function calculate() {
+            const solar = parseFloat(document.getElementById('solar').value) || 0;
+            const battery = parseFloat(document.getElementById('battery').value) || 0;
+            const usage = parseFloat(document.getElementById('usage').value) || 0;
+
+            // 2026 tabaqalashtirilgan tarif farqi (taxminan 600 so'm/kVt)
+            const priceDiff = 600; 
+
+            let excess = Math.max(solar - usage, 0);
+            let actualStored = Math.min(excess, battery);
+            let dailySaving = actualStored * priceDiff;
+            let efficiency = battery > 0 ? (actualStored / battery) * 100 : 0;
+
+            // Natijani ko'rsatish
+            document.getElementById('result').classList.remove('hidden');
+            document.getElementById('savingMoney').innerText = dailySaving.toLocaleString() + " so‘m";
+            document.getElementById('percentText').innerText = Math.round(efficiency) + "%";
+            document.getElementById('progressBar').style.width = efficiency + "%";
+
+            let adviceNode = document.getElementById('advice');
+            if (actualStored > 0) {
+                adviceNode.innerText = `Siz ${actualStored} kVt/soat energiyani saqladingiz. Uni soat 19:00 dan keyin ishlating, shunda maksimal foyda ko'rasiz.`;
+            } else {
+                adviceNode.innerText = "Bugun ortiqcha energiya qolmadi. Iste'molni kamaytirishni yoki panellar sonini ko'paytirishni tavsiya qilamiz.";
+            }
+        }
+    </script>
+</body>
+</html>
+
