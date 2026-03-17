@@ -1,25 +1,55 @@
-function calculate() {
-    const solar = parseFloat(document.getElementById('solar').value) || 0;
-    const battery = parseFloat(document.getElementById('battery').value) || 0;
-    const usage = parseFloat(document.getElementById('usage').value) || 0;
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GridTejamkor AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-green-50 p-4">
+    <div class="max-w-md mx-auto bg-white rounded-2xl shadow-lg p-6">
+        <h1 class="text-2xl font-bold text-green-600 text-center mb-6">GridTejamkor AI</h1>
+        
+        <div class="space-y-4">
+            <input type="number" id="solar" placeholder="Quyosh (kVt)" class="w-full border p-3 rounded-lg">
+            <input type="number" id="battery" placeholder="Batareya (kVt)" class="w-full border p-3 rounded-lg">
+            <input type="number" id="usage" placeholder="Iste'mol (kVt)" class="w-full border p-3 rounded-lg">
+            
+            <button onclick="hisobla()" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold">
+                Hisoblash va Botga yuborish
+            </button>
+        </div>
 
-    const priceDiff = 600; 
-    let excess = Math.max(solar - usage, 0);
-    let actualStored = Math.min(excess, battery);
-    let dailySaving = actualStored * priceDiff;
-    let efficiency = battery > 0 ? (actualStored / battery) * 100 : 0;
+        <div id="result" class="mt-6 hidden p-4 bg-green-100 rounded-lg text-center font-bold">
+            Natija: <span id="summa">0</span> so'm tejash!
+        </div>
+    </div>
 
-    // Natijani ko'rsatish
-    document.getElementById('result').classList.remove('hidden');
-    document.getElementById('savingMoney').innerText = dailySaving.toLocaleString() + " so‘m";
-    document.getElementById('percentText').innerText = Math.round(efficiency) + "%";
-    document.getElementById('progressBar').style.width = efficiency + "%";
+    <script>
+        function hisobla() {
+            const solar = document.getElementById('solar').value;
+            const battery = document.getElementById('battery').value;
+            const usage = document.getElementById('usage').value;
+            
+            // HISOB-KITOB
+            let foyda = Math.min(Math.max(solar - usage, 0), battery) * 600;
+            document.getElementById('result').classList.remove('hidden');
+            document.getElementById('summa').innerText = foyda.toLocaleString();
 
-    // --- TELEGRAMGA XABAR YUBORISH ---
-    const token = "8709283761:AAF0YQVWR6uJa4aQnrYcA5euvBoD4kcUf2w"; // BotFather bergan tokenni bura qo'ying
-    const chat_id = "8408192670";   // O'zingizning ID raqamingizni qo'ying
-    const message = `Yangi foydalanuvchi! %0A- Quyosh: ${solar} kVt %0A- Batareya: ${battery} kVt %0A- Tejamkorlik: ${dailySaving} so'm`;
+            // --- TELEGRAM SOZLAMALARI (SHU YERNI O'ZGARTIRING) ---
+            const token = "8709283761:AAF0YQVWR6uJa4aQnrYcA5euvBoD4kcUf2w"; 
+            const chat_id = "8408192670";
+            // ---------------------------------------------------
 
-    fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chat_id}&text=${message}`);
-    // ---------------------------------
-}
+            const text = `🚀 Yangi hisob!%0A☀️ Quyosh: ${solar}%0A🔋 Batareya: ${battery}%0A💰 Foyda: ${foyda} so'm`;
+            const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chat_id}&text=${text}`;
+
+            fetch(url).then(() => {
+                alert("Xabar botga yuborildi!");
+            }).catch(err => {
+                alert("Xato: " + err);
+            });
+        }
+    </script>
+</body>
+</html>
