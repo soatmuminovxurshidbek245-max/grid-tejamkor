@@ -7,54 +7,74 @@
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#16a34a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-up { animation: fadeIn 0.5s ease-out forwards; }
+    </style>
 </head>
-<body class="bg-green-50 p-4 font-sans">
-    <div class="max-w-md mx-auto bg-white rounded-2xl shadow-lg p-6">
-        <h1 class="text-2xl font-bold text-green-600 text-center mb-6">GridTejamkor AI</h1>
-        
-        <div class="space-y-4">
-            <label class="block text-sm font-medium text-gray-700">Quyosh paneli (kVt)</label>
-            <input type="number" id="solar" placeholder="Masalan: 20" class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none">
-            
-            <label class="block text-sm font-medium text-gray-700">Batareya sig'imi (kVt)</label>
-            <input type="number" id="battery" placeholder="Masalan: 10" class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none">
-            
-            <label class="block text-sm font-medium text-gray-700">Kunduzgi iste'mol (kVt)</label>
-            <input type="number" id="usage" placeholder="Masalan: 5" class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none">
-            
-            <button onclick="hisobla()" class="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-bold shadow-lg transition-all active:scale-95">
-                Hisoblash va Botga yuborish
-            </button>
+<body class="bg-gray-50 font-sans min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-md w-full bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100 animate-up">
+        <div class="bg-green-600 p-8 text-white text-center">
+            <h1 class="text-3xl font-extrabold tracking-tight">GridTejamkor <span class="text-green-200">AI</span></h1>
+            <p class="text-green-100 text-sm mt-2 opacity-90">Aqlli energiya va tejamkorlik tizimi</p>
         </div>
 
-        <div id="result" class="mt-6 hidden p-4 bg-green-100 rounded-xl text-center border border-green-200">
-            <p class="text-green-800">Sizning bugungi foydangiz:</p>
-            <div class="text-2xl font-black text-green-700"><span id="summa">0</span> so'm</div>
+        <div class="p-8 space-y-5">
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase ml-1 mb-1">Quyosh paneli (kVt/soat)</label>
+                <input type="number" id="solar" placeholder="Masalan: 25" class="w-full bg-gray-50 border-2 border-transparent focus:border-green-500 focus:bg-white p-4 rounded-2xl outline-none transition-all">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase ml-1 mb-1">Batareya sig'imi (kVt/soat)</label>
+                <input type="number" id="battery" placeholder="Masalan: 10" class="w-full bg-gray-50 border-2 border-transparent focus:border-green-500 focus:bg-white p-4 rounded-2xl outline-none transition-all">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase ml-1 mb-1">Kunduzgi iste'mol (kVt/soat)</label>
+                <input type="number" id="usage" placeholder="Masalan: 12" class="w-full bg-gray-50 border-2 border-transparent focus:border-green-500 focus:bg-white p-4 rounded-2xl outline-none transition-all">
+            </div>
+
+            <button onclick="hisobla()" class="w-full bg-green-600 hover:bg-green-700 text-white py-5 rounded-2xl font-bold text-lg shadow-lg shadow-green-200 transition-all active:scale-95 mb-2">
+                Hisoblash va Botga yuborish
+            </button>
+
+            <div id="result" class="hidden mt-4 p-6 bg-green-50 rounded-[2rem] border border-green-100 animate-up">
+                <p class="text-center text-green-700 font-medium">Sizning kunduzgi tejamkorligingiz:</p>
+                <h2 class="text-center text-3xl font-black text-green-600 mt-2"><span id="summa">0</span> so'm</h2>
+                <p class="text-[10px] text-center text-green-500 mt-3 uppercase tracking-widest font-bold">Ma'lumotlar botga yuborildi</p>
+            </div>
         </div>
     </div>
 
     <script>
         function hisobla() {
-            const solar = document.getElementById('solar').value || 0;
-            const battery = document.getElementById('battery').value || 0;
-            const usage = document.getElementById('usage').value || 0;
+            const solar = parseFloat(document.getElementById('solar').value) || 0;
+            const battery = parseFloat(document.getElementById('battery').value) || 0;
+            const usage = parseFloat(document.getElementById('usage').value) || 0;
             
+            // O'zbekiston tariflariga ko'ra (600 so'm farq)
             let foyda = Math.min(Math.max(solar - usage, 0), battery) * 600;
             
             document.getElementById('result').classList.remove('hidden');
             document.getElementById('summa').innerText = foyda.toLocaleString();
 
-            // DIQQAT: SHU YERGA O'ZINGIZNI MA'LUMOTLARINGIZNI QAYTADAN QO'YING
+            // --- BU YERGA O'Z MA'LUMOTLARINGIZNI YOZING ---
             const token = "8709283761:AAF0YQVWR6uJa4aQnrYcA5euvBoD4kcUf2w"; 
             const chat_id = "8408192670";
+            // --------------------------------------------
 
-            const text = `🚀 *Yangi Hisob!*%0A☀️ Quyosh: ${solar} kVt%0A🔋 Batareya: ${battery} kVt%0A💰 *Foyda: ${foyda.toLocaleString()} so'm*`;
+            const text = `🚀 *Yangi Hisob-kitob!*%0A%0A☀️ Quyosh: ${solar} kVt%0A🔋 Batareya: ${battery} kVt%0A🏠 Iste'mol: ${usage} kVt%0A💰 *Foyda: ${foyda.toLocaleString()} so'm*`;
             const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chat_id}&text=${text}&parse_mode=Markdown`;
 
-            fetch(url).then(() => {
-                alert("Muvaffaqiyatli! Ilova ma'lumotni botga yubordi.");
+            fetch(url).then(res => {
+                if(res.ok) {
+                    console.log("Botga ketdi!");
+                }
             });
         }
     </script>
