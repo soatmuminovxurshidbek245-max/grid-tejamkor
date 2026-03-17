@@ -1,0 +1,16 @@
+{
+  "name": "GridTejamkor AI",
+  "short_name": "GridTejamkor",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#16a34a",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3222/3222672.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+
