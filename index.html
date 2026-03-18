@@ -78,5 +78,15 @@
             });
         }
     </script>
+    
+<script>
+// PWA ro'yxatdan o'tkazish
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js');
+}
+</script>
+    
+
+    
 </body>
 </html>
